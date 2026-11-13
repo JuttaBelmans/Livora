@@ -1,63 +1,50 @@
-# Technical framework for the news website
+# Livora
 
-This repository intentionally contains no finished website. Use the requirements below as the default technical framework for the project.
+Livora is een Nederlandstalig online magazine over lifestyle, mode en beauty voor jonge vrouwen. De vormgeving gebruikt een rustige, redactionele stijl met crème, zachtroze en donkerbruin.
 
-The project team may choose a different approach. When a request conflicts with this framework, explain the consequence briefly, confirm the deviation, and record the new choice in this README before implementing it.
+## Techniek
 
-## Application
+- Next.js 16 met React en de App Router
+- Keystatic voor artikelbeheer
+- Artikelen staan als leesbare `.mdoc`-bestanden in `src/content/artikelen`
+- Tijdens lokale ontwikkeling gebruikt Keystatic lokale bestandsopslag
+- In productie gebruikt Keystatic GitHub-opslag voor `JuttaBelmans/Livora`
+- Geen aparte database of zelfgebouwd CMS
 
-- Build the website with Next.js and React.
-- Use versions supported by Vercel.
-- Make the interface usable on smartphones and laptops.
-- Keep the code understandable for beginning developers.
-- Prefer a simple project structure over unnecessary abstractions.
-- Use the site name, subject, target audience, sections, logo, colours and visual preferences supplied by the project team.
-- Store supplied logos and visual assets in `public/brand`.
+Deze keuzes volgen het oorspronkelijke technische kader. De repositorynaam is afgeleid van de reeds ingestelde Git-remote (`JuttaBelmans/Livora`); er is niets gepubliceerd of gepusht.
 
-## Minimum website
+## Pagina's
 
-The website contains:
+- `/` — homepage met uitgelicht verhaal en rubrieken
+- `/artikelen` — alle verhalen, met filters voor Lifestyle, Mode en Beauty
+- `/artikelen/[slug]` — individueel artikel
+- `/over-livora` — informatie over het magazine
+- `/keystatic` — beheeromgeving
 
-- a homepage
-- an article overview
-- individual article pages
-- an About page
-- a Keystatic editing environment at `/keystatic`
-- three clearly fictional example articles for testing
+De drie artikelen zijn fictieve voorbeelden. De lokaal opgeslagen voorbeeldfoto's zijn afkomstig van Unsplash en staan in `public/images`.
 
-## Content and Keystatic
+## Lokaal starten
 
-- Use Keystatic as the content management system.
-- Store articles as readable files in the Git repository.
-- Use Keystatic local storage during local development.
-- Use Keystatic GitHub storage on the deployed website.
-- Do not build a custom CMS.
-- Do not add a separate database unless the project team explicitly requests one.
+Installeer eerst Node.js 20.9 of nieuwer. Open daarna een terminal in deze projectmap en voer uit:
 
-## Keystatic authentication
+```bash
+npm install
+npm run dev
+```
 
-Local development uses Keystatic local storage and does not require a GitHub login.
+Open vervolgens [http://localhost:3000](http://localhost:3000). Het artikelbeheer staat op [http://localhost:3000/keystatic](http://localhost:3000/keystatic). In lokale modus is geen GitHub-login nodig. Nieuwe artikelen die je in Keystatic maakt, worden bestanden onder `src/content/artikelen`.
 
-On the deployed website:
+## Keystatic op de gepubliceerde site
 
-- connect Keystatic GitHub mode to this repository
-- use a custom GitHub App for authentication
-- allow editing only for GitHub users with write access to the repository
-- keep the repository private
-- store the GitHub App credentials as Vercel environment variables
-- never commit credentials, tokens or `.env` files
-- verify that an unauthorised user cannot create, edit or delete content
-
-Keystatic GitHub mode uses these environment variables:
+De productieconfiguratie schakelt over naar GitHub-opslag voor `JuttaBelmans/Livora`. De repository moet privé blijven. Maak voor de live Keystatic-omgeving een aangepaste GitHub App en zet de volgende waarden als omgevingsvariabelen in Vercel:
 
 - `KEYSTATIC_GITHUB_CLIENT_ID`
 - `KEYSTATIC_GITHUB_CLIENT_SECRET`
 - `KEYSTATIC_SECRET`
 - `NEXT_PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`
 
-## Publication
+Geef de GitHub App alleen toegang tot deze repository. GitHub-gebruikers moeten schrijfrechten op de repository hebben om in Keystatic te kunnen bewerken. Zet nooit echte geheimen in Git of in een `.env`-bestand dat je commit. `.env.example` bevat alleen lege namen als geheugensteun.
 
-- Use GitHub for version control.
-- Deploy the website on Vercel.
-- Test the complete website locally before deployment.
-- Keep secrets outside the repository.
+## Belangrijk bij lokaal testen
+
+`npm run dev` gebruikt lokale opslag. De productie-build schakelt Keystatic-configuratie over naar GitHub-modus; de volledige live-authenticatie kan pas worden gecontroleerd nadat de GitHub App en productie-omgevingsvariabelen zijn ingesteld. Er is tijdens deze eerste implementatie niets naar GitHub of Vercel verzonden.
