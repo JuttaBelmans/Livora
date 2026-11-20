@@ -23,9 +23,25 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const { node } = await article.content();
 
   return <article className="article-page">
-    <div className="article-top content-width"><Link className="back-link" href="/artikelen">← Alle artikelen</Link><p className="eyebrow">{article.category} · {formatDate(article.publishedAt)}</p><h1>{article.title}</h1><p className="article-deck">{article.excerpt}</p>{article.fictional && <span className="fictional-note">Fictief voorbeeldartikel</span>}</div>
-    <div className="article-cover"><Image src={article.imageUrl} alt={article.imageAlt} fill priority sizes="100vw" /></div>
+    <div className="article-top content-width">
+      <Link className="back-link" href="/artikelen">← Alle artikelen</Link>
+      <p className="eyebrow">
+        {article.category}
+        {article.publishedAt && <> · {formatDate(article.publishedAt)}</>}
+      </p>
+      <h1>{article.title}</h1>
+      <p className="article-deck">{article.excerpt}</p>
+      {article.fictional && <span className="fictional-note">Fictief voorbeeldartikel</span>}
+    </div>
+    {article.imageUrl && (
+      <div className="article-cover">
+        <Image src={article.imageUrl} alt={article.imageAlt} fill priority sizes="100vw" />
+      </div>
+    )}
     <MarkdocContent node={node} />
-    <div className="article-end"><p>Met liefde gelezen?</p><Link className="button" href="/artikelen">Ontdek meer verhalen</Link></div>
+    <div className="article-end">
+      <p>Met liefde gelezen?</p>
+      <Link className="button" href="/artikelen">Ontdek meer verhalen</Link>
+    </div>
   </article>;
 }
