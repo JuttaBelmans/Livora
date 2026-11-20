@@ -17,7 +17,7 @@ export default async function HomePage() {
         </div>
 
         {featured ? (
-        <Link className="hero" href={/artikelen/${featured.slug}}>
+<Link className="hero" href={/artikelen/${featured.slug}}>
             {featured.entry.imageUrl && (
               <Image
                 src={featured.entry.imageUrl}
