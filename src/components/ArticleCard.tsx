@@ -5,14 +5,55 @@ import { formatDate } from '@/lib/articles';
 
 type Props = {
   slug: string;
-  title: string;
-  category: string;
-  excerpt: string;
-  imageUrl: string | null;
-  imageAlt: string;
-  publishedAt: string | null;
+  title?: string;
+  category?: string;
+  excerpt?: string;
+  imageUrl?: string | null;
+  imageAlt?: string;
+  publishedAt?: string | null;
   featured?: boolean;
 };
+
+function getArticleInfo(slug: string) {
+  const titles: Record<string, string> = {
+    'beauty-routine-opbouwen': 'Een beauty routine opbouwen die je ook echt volhoudt',
+    'capsule-wintergarderobe': 'De capsule wintergarderobe',
+    'digitale-rust': 'Digitale rust: zo maak je opnieuw ruimte in je hoofd',
+    'kleine-gewoontes': 'Kleine gewoontes voor een mooiere dag',
+    'laagjes-stylen': 'Laagjes stylen: zo creëer je een stijlvolle winterlook',
+    'winterhuid-verzorgen': 'Je winterhuid verzorgen',
+    'wintermode-2026': 'Wintermode 2026',
+    'winterse-beautytrends': 'Winterse beautytrends',
+    'winterse-selfcare': 'Winterse selfcare',
+  };
+
+  let category = 'Lifestyle';
+
+  if (
+    slug.includes('beauty') ||
+    slug.includes('winterhuid')
+  ) {
+    category = 'Beauty';
+  } else if (
+    slug.includes('wintermode') ||
+    slug.includes('capsule') ||
+    slug.includes('laagjes')
+  ) {
+    category = 'Mode';
+  }
+
+  const images: Record<string, string> = {
+    Lifestyle: '/images/ochtendmoment.jpg',
+    Mode: '/images/persoonlijke-stijl.jpg',
+    Beauty: '/images/beautymoment.jpg',
+  };
+
+  return {
+    title: titles[slug] || slug.replaceAll('-', ' '),
+    category,
+    image: images[category],
+  };
+}
 
 export default function ArticleCard({
   slug,
@@ -24,128 +65,40 @@ export default function ArticleCard({
   publishedAt,
   featured,
 }: Props) {
-  const articleTitle = title?.trim() || 'Ontdek dit verhaal';
-  const articleExcerpt = excerpt?.trim() || 'Lees meer over dit onderwerp bij Livora.';
+  const fallback = getArticleInfo(slug);
+  const articleTitle = title?.trim() || fallback.title;
+  const articleCategory = fallback.category;
+  const articleImage = imageUrl || fallback.image;
 
   return (
-    <article
-      className={`article-card${featured ? ' article-card-featured' : ''}`}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        backgroundColor: '#fffdf8',
-      }}
-    >
-      <Link
-        className="card-image"
-        href={`/artikelen/${slug}`}
-        style={{
-          display: 'block',
-          position: 'relative',
-          width: '100%',
-          aspectRatio: '4 / 3',
-          overflow: 'hidden',
-          backgroundColor: '#f3c4d5',
-        }}
-      >
-        {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={imageAlt || articleTitle}
-            fill
-            sizes="(max-width: 700px) 100vw, (max-width: 1000px) 50vw, 33vw"
-            style={{ objectFit: 'cover' }}
-          />
-        ) : (
-          <div
-            style={{
-              width: '100%',
-              height: '100%',
-              background: 'linear-gradient(135deg, #f3c4d5, #faf0e8)',
-            }}
-          />
-        )}
-
-        <span className="image-category">{category}</span>
+    <article className={`article-card${featured ? ' article-card-featured' : ''}`}>
+      <Link className="card-image" href={`/artikelen/${slug}`}>
+        <Image
+          src={articleImage}
+          alt={imageAlt || articleTitle}
+          fill
+          sizes="(max-width: 700px) 100vw, (max-width: 1000px) 50vw, 33vw"
+          style={{ objectFit: 'cover' }}
+        />
+        <span className="image-category">{articleCategory}</span>
       </Link>
 
-      <div
-        className="card-copy"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          gap: '12px',
-          padding: '22px 4px 26px',
-          color: '#171512',
-          backgroundColor: '#fffdf8',
-          visibility: 'visible',
-          opacity: 1,
-        }}
-      >
+      <div className="card-copy">
         {publishedAt && (
-          <p
-            className="eyebrow"
-            style={{
-              display: 'block',
-              color: '#ef5638',
-              margin: 0,
-            }}
-          >
-            {formatDate(publishedAt)}
-          </p>
+          <p className="eyebrow">{formatDate(publishedAt)}</p>
         )}
 
-        <h3
-          style={{
-            display: 'block',
-            visibility: 'visible',
-            opacity: 1,
-            color: '#171512',
-            fontSize: 'clamp(22px, 2vw, 30px)',
-            lineHeight: 1.15,
-            fontWeight: 700,
-            margin: 0,
-            width: '100%',
-          }}
-        >
-          <Link
-            href={`/artikelen/${slug}`}
-            style={{
-              color: '#171512',
-              textDecoration: 'none',
-            }}
-          >
+        <h3>
+          <Link href={`/artikelen/${slug}`}>
             {articleTitle}
           </Link>
         </h3>
 
-        <p
-          style={{
-            display: 'block',
-            visibility: 'visible',
-            opacity: 1,
-            color: '#625b55',
-            fontSize: '15px',
-            lineHeight: 1.7,
-            margin: 0,
-          }}
-        >
-          {articleExcerpt}
+        <p>
+          {excerpt?.trim() || 'Ontdek meer inspiratie bij Livora.'}
         </p>
 
-        <Link
-          className="text-link"
-          href={`/artikelen/${slug}`}
-          style={{
-            display: 'inline-flex',
-            marginTop: '8px',
-            color: '#171512',
-            textDecoration: 'none',
-            fontWeight: 700,
-          }}
-        >
+        <Link className="text-link" href={`/artikelen/${slug}`}>
           Lees het verhaal <span aria-hidden="true">↗</span>
         </Link>
       </div>
